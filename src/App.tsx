@@ -1,10 +1,7 @@
-import {Posts} from "./components";
-
-
 const App = () => {
     return (
         <div>
-            <Posts />
+            App
         </div>
     );
 };
