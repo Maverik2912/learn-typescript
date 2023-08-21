@@ -1,21 +1,47 @@
-import {useForm} from "react-hook-form";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {useEffect} from "react";
+import {joiResolver} from "@hookform/resolvers/joi";
+
 import {ICar} from "../../../interfaces";
+import {validator} from "./validator";
+import {carsActions} from "../../../redux";
+import {useAppDispatch, useAppSelector} from "../../../hooks/routerHooks";
+import styles from './CarsForm.module.css';
 
 const CarsForm = () => {
-    const {register, handleSubmit, reset, setValue, formState: {errors}} = useForm<ICar>();
+    const {carForUpdate} = useAppSelector(store => store.cars);
+    const dispatch = useAppDispatch();
+    const {register, handleSubmit, reset, setValue, formState: {errors}} = useForm<ICar>({
+        resolver: joiResolver(validator)
+    });
 
-    const save = () => {
+    useEffect(() => {
+        if(carForUpdate) {
+            setValue('brand', carForUpdate.brand);
+            setValue('price', carForUpdate.price);
+            setValue('year', carForUpdate.year);
+        }
+    }, [carForUpdate, setValue]);
 
+    const save: SubmitHandler<ICar> = async (car) => {
+        await dispatch(carsActions.create({car}));
+        reset();
     };
 
+    const update: SubmitHandler<ICar> = async (car) => {
+        await dispatch(carsActions.update({id: carForUpdate.id, car: car}));
+        reset();
+    }
+
     return (
-        <form onSubmit={handleSubmit(save)}>
+        <form className={styles.form} onSubmit={handleSubmit(carForUpdate ? update: save)}>
             <div>
                 <input
                     type="text"
                     placeholder="brand"
                     {...register('brand')}
                 />
+                {errors.brand && <span>{errors.brand.message}</span>}
             </div>
             <div>
                 <input
@@ -23,6 +49,7 @@ const CarsForm = () => {
                     placeholder="price"
                     {...register('price', {valueAsNumber: true})}
                 />
+                {errors.price && <span>{errors.price.message}</span>}
             </div>
             <div>
                 <input
@@ -30,7 +57,9 @@ const CarsForm = () => {
                     placeholder="year"
                     {...register('year', {valueAsNumber: true})}
                 />
+                {errors.year && <span>{errors.year.message}</span>}
             </div>
+            <button>{carForUpdate ? 'Update' : 'Save'}</button>
         </form>
     );
 };

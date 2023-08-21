@@ -3,7 +3,7 @@ import {AppDispatch, RootStore} from "../redux";
 import {useLocation} from "react-router-dom";
 import {Location} from "react-router-dom";
 
-const useAppSelector :TypedUseSelectorHook<RootStore> = useSelector;
+const useAppSelector: TypedUseSelectorHook<RootStore> = useSelector;
 
 const useAppDispatch = () => useDispatch<AppDispatch>();
 
