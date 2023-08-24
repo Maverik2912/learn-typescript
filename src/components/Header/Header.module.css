@@ -1,0 +1,19 @@
+.header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    height: 70px;
+    background-color: #634b79;
+}
+
+.header a{
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+}
+
+.header a[class='active'] {
+    color: yellow;
+}
+
