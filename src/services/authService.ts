@@ -7,8 +7,16 @@ const refreshTokenKey = 'refresh';
 const authService = {
     register: (user: IAuth) => apiService.post<IUser>(urls.auth.register, user),
 
-    async login(user: IAuth): Promise<void> {
+    async login(user: IAuth): Promise<IUser> {
         const {data} = await apiService.post<ITokens>(urls.auth.login, user);
+        this.setTokens(data);
+        const {data: me} = await this.me();
+        return me;
+    },
+
+    async rerfesh(): Promise<void> {
+        const refresh = this.getRefreshToken();
+        const {data} = await apiService.post<ITokens>(urls.auth.refresh, {refresh});
         this.setTokens(data);
     },
 
